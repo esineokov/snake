@@ -1,3 +1,5 @@
+import collections
+
 import pygame
 
 from constant import HEIGHT, WIDTH
@@ -15,16 +17,30 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH/2, HEIGHT/2)
 
-        self.last_coord = None
+        self.coord_history  = collections.deque(maxlen=2)
         self.save_last_coord()
 
     def update(self, *args, **kwargs) -> None:
-        self.rect.x += 1
-        if self.rect.left == WIDTH - self.width:
-            self.rect.x = 0
+        if not self.coord_history:
+            self.rect.x += 1
+
+        # if self.is_border():
+        #     # сменить направление
+        # else:
+        #
+        #
+        # self.save_last_coord()
+        # self.rect.x += 1
+        # if self.is_border():
+        #     test = 1
 
     def save_last_coord(self):
-        self.last_coord = (self.rect.x, self.rect.y)
+        self.coord_history.append((self.rect.x, self.rect.y))
 
     def is_border(self):
-        return self.rect.x == 0 or self.rect.y == 0 or self.rect.x == WIDTH - self.width or
+        return (0 in (self.rect.x, self.rect.y)
+                or self.rect.x == WIDTH - self.width
+                or self.rect.y == HEIGHT - self.height)
+
+    def is_direct_direction(self):
+
